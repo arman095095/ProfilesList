@@ -18,7 +18,7 @@ enum URLComponents {
     }
 }
 
-public protocol ProfilesNetworkServiceProtocol {
+protocol ProfilesNetworkServiceProtocol {
     func getFirstProfilesIDs(count: Int, completion: @escaping (Result<[String],Error>) -> Void)
     func getNextProfilesIDs(count: Int, completion: @escaping (Result<[String],Error>) -> Void)
 }
@@ -38,7 +38,7 @@ final class ProfilesNetworkService {
 
 extension ProfilesNetworkService: ProfilesNetworkServiceProtocol {
 
-    public func getFirstProfilesIDs(count: Int, completion: @escaping (Result<[String],Error>) -> Void) {
+    func getFirstProfilesIDs(count: Int, completion: @escaping (Result<[String],Error>) -> Void) {
         if !InternetConnectionManager.isConnectedToNetwork() {
             completion(.failure(ConnectionError.noInternet))
         }
@@ -46,7 +46,7 @@ extension ProfilesNetworkService: ProfilesNetworkServiceProtocol {
         getFirstUsersIDs(query: query, completion: completion)
     }
     
-    public func getNextProfilesIDs(count: Int, completion: @escaping (Result<[String],Error>) -> Void) {
+    func getNextProfilesIDs(count: Int, completion: @escaping (Result<[String],Error>) -> Void) {
         if !InternetConnectionManager.isConnectedToNetwork() {
             completion(.failure(ConnectionError.noInternet))
         }

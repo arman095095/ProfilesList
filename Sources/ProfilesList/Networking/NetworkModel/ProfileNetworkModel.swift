@@ -10,29 +10,29 @@ import FirebaseFirestore
 import ModelInterfaces
 
 //MARK: FirebaseFirestore
-public struct ProfileNetworkModel: ProfileNetworkModelProtocol {
+struct ProfileNetworkModel: ProfileNetworkModelProtocol {
     
-    public var userName: String
-    public var info: String
-    public var sex: String
-    public var imageUrl: String
-    public var id: String
-    public var country: String
-    public var city: String
-    public var birthday: String
-    public var removed: Bool
-    public var online: Bool
-    public var lastActivity: Date?
-    public var postsCount: Int
+    var userName: String
+    var info: String
+    var sex: String
+    var imageUrl: String
+    var id: String
+    var country: String
+    var city: String
+    var birthday: String
+    var removed: Bool
+    var online: Bool
+    var lastActivity: Date?
+    var postsCount: Int
     
-    public init(userName: String,
-                imageName: String,
-                identifier: String,
-                sex: String,
-                info: String,
-                birthDay: String,
-                country: String,
-                city: String) {
+    init(userName: String,
+         imageName: String,
+         identifier: String,
+         sex: String,
+         info: String,
+         birthDay: String,
+         country: String,
+         city: String) {
         self.userName = userName
         self.info = info
         self.sex = sex
@@ -47,7 +47,7 @@ public struct ProfileNetworkModel: ProfileNetworkModelProtocol {
         self.postsCount = 0
     }
     
-    public func convertModelToDictionary() -> [String: Any] { //For send Model to Firebase as Dictionary
+    func convertModelToDictionary() -> [String: Any] { //For send Model to Firebase as Dictionary
         var muserDictionary: [String: Any] = [ProfileURLComponents.Parameters.uid.rawValue:id]
         muserDictionary[ProfileURLComponents.Parameters.username.rawValue] = userName
         muserDictionary[ProfileURLComponents.Parameters.info.rawValue] = info

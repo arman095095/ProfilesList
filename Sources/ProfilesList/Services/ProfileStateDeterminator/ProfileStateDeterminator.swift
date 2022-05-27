@@ -27,7 +27,9 @@ final class ProfileStateDeterminator {
 
 extension ProfileStateDeterminator: ProfileStateDeterminatorProtocol {
     
-    
+    func isProfileCurrent(userID: String) -> Bool {
+        userID == account.profile.id
+    }
     
     func isProfileFriend(userID: String) -> Bool {
         account.friendIds.contains(userID)
