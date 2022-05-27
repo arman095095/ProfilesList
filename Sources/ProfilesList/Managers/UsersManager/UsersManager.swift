@@ -24,12 +24,15 @@ final class UsersManager {
     private let accountID: String
     private let profilesService: ProfilesNetworkServiceProtocol
     private let profileInfoService: ProfileInfoNetworkServiceProtocol
+    private let profileStateDeterminator: ProfileStateDeterminatorProtocol
     
     init(accountID: String,
          profilesService: ProfilesNetworkServiceProtocol,
-         profileInfoService: ProfileInfoNetworkServiceProtocol) {
+         profileInfoService: ProfileInfoNetworkServiceProtocol,
+         profileStateDeterminator: ProfileStateDeterminator) {
         self.profilesService = profilesService
         self.profileInfoService = profileInfoService
+        self.profileStateDeterminator = profileStateDeterminator
         self.accountID = accountID
     }
 }
@@ -42,10 +45,7 @@ extension UsersManager: UsersManagerProtocol {
             switch result {
             case .success(let ids):
                 let group = DispatchGroup()
-                var profilesIDs = ids
-                if let firstIndex = profilesIDs.firstIndex(of: self.accountID) {
-                    profilesIDs.remove(at: firstIndex)
-                }
+                var profilesIDs = filter(ids: ids)
                 var profiles = [ProfileModelProtocol]()
                 profilesIDs.forEach {
                     group.enter()
@@ -103,4 +103,15 @@ extension UsersManager: UsersManagerProtocol {
     }
 }
 
-
+private extension UsersManager {
+    func filter(ids: [String]) -> [String] {
+        let determinator = profileStateDeterminator
+        var profilesIDs = [String]()
+        if let firstIndex = profilesIDs.firstIndex(of: self.accountID) {
+            profilesIDs.remove(at: firstIndex)
+        }
+        ids.forEach {
+            if determinator.isProfileBlocked(userID: $0) || determinator.isProfileFriend(userID: $0) || determinator.isProfileRequested(userID: $0)
+        }
+    }
+}
