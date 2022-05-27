@@ -19,6 +19,7 @@ private let dependencies: [Package.Dependency] = [
 
 let package = Package(
     name: "ProfilesList",
+    platforms: [.iOS(.v13)],
     products: [
         // Products define the executables and libraries a package produces, and make them visible to other packages.
         .library(
@@ -37,8 +38,8 @@ let package = Package(
                            .product(name: "Managers", package: "Managers"),
                            .product(name: "Utils", package: "Utils"),
                            .product(name: "Swinject", package: "Swinject"),
-                           .product(name: "ProfileRouteMap", package: "PostsRouteMap"),
-                           .product(name: "ProfilesListRouteMap", package: "PostsRouteMap")
+                           .product(name: "ProfileRouteMap", package: "ProfileRouteMap"),
+                           .product(name: "ProfilesListRouteMap", package: "ProfilesListRouteMap"),
                            .product(name: "UserStoryFacade", package: "UserStoryFacade"),
                            .product(name: "NetworkServices", package: "NetworkServices")]),
     ]
