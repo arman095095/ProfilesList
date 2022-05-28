@@ -10,23 +10,9 @@ import NetworkServices
 import ModelInterfaces
 import Services
 
-enum UsersManagerError: LocalizedError {
-    case another(Error)
-    case notUsers
-    
-    var errorDescription: String? {
-        switch self {
-        case .another(let error):
-            return error.localizedDescription
-        case .notUsers:
-            return "Пользователей не осталось"
-        }
-    }
-}
-
 protocol UsersManagerProtocol: AnyObject {
-    func getFirstProfiles(completion: @escaping (Result<[ProfileModelProtocol], UsersManagerError>) -> Void)
-    func getNextProfiles(completion: @escaping (Result<[ProfileModelProtocol], UsersManagerError>) -> Void)
+    func getFirstProfiles(completion: @escaping (Result<[ProfileModelProtocol], Error>) -> Void)
+    func getNextProfiles(completion: @escaping (Result<[ProfileModelProtocol], Error>) -> Void)
 }
 
 final class UsersManager {
@@ -53,17 +39,13 @@ final class UsersManager {
 
 extension UsersManager: UsersManagerProtocol {
     
-    func getFirstProfiles(completion: @escaping (Result<[ProfileModelProtocol], UsersManagerError>) -> Void) {
+    func getFirstProfiles(completion: @escaping (Result<[ProfileModelProtocol], Error>) -> Void) {
         profilesService.getFirstProfilesIDs(count: Limits.users.rawValue) { [weak self] result in
             guard let self = self else { return }
             switch result {
             case .success(let ids):
                 let group = DispatchGroup()
                 let profilesIDs = self.filter(ids: ids)
-                guard !profilesIDs.isEmpty else {
-                    completion(.failure(.notUsers))
-                    return
-                }
                 var profiles = [ProfileModelProtocol]()
                 profilesIDs.forEach {
                     group.enter()
@@ -82,22 +64,18 @@ extension UsersManager: UsersManagerProtocol {
                     completion(.success(profiles))
                 }
             case .failure(let error):
-                completion(.failure(.another(error)))
+                completion(.failure(error))
             }
         }
     }
     
-    func getNextProfiles(completion: @escaping (Result<[ProfileModelProtocol], UsersManagerError>) -> Void) {
+    func getNextProfiles(completion: @escaping (Result<[ProfileModelProtocol], Error>) -> Void) {
         profilesService.getNextProfilesIDs(count: Limits.users.rawValue) { [weak self] result in
             guard let self = self else { return }
             switch result {
             case .success(let ids):
                 let group = DispatchGroup()
                 let profilesIDs = self.filter(ids: ids)
-                guard !profilesIDs.isEmpty else {
-                    completion(.failure(.notUsers))
-                    return
-                }
                 var profiles = [ProfileModelProtocol]()
                 profilesIDs.forEach {
                     group.enter()
@@ -116,7 +94,7 @@ extension UsersManager: UsersManagerProtocol {
                     }
                 }
             case .failure(let error):
-                completion(.failure(.another(error)))
+                completion(.failure(error))
             }
         }
     }

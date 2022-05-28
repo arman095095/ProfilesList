@@ -11,16 +11,12 @@ import ProfileRouteMap
 import ModelInterfaces
 
 protocol ProfilesListRouterInput: AnyObject {
-    func addChildProfile(profile: ProfileModelProtocol, output: ProfileModuleOutput)
-}
-
-protocol ProfilesListRouterOutput: AnyObject {
-    func childAdded(viewController: UIViewController)
+    func addChildProfileModule(profile: ProfileModelProtocol, output: ProfileModuleOutput)
+    func addChildEmptyModule()
 }
 
 final class ProfilesListRouter {
-    weak var transitionHandler: UIViewController?
-    weak var output: ProfilesListRouterOutput?
+    weak var transitionHandler: UIPageViewController?
     private let routeMap: RouteMapPrivate
     
     init(routeMap: RouteMapPrivate) {
@@ -29,10 +25,12 @@ final class ProfilesListRouter {
 }
 
 extension ProfilesListRouter: ProfilesListRouterInput {
-    func addChildProfile(profile: ProfileModelProtocol, output: ProfileModuleOutput) {
+    func addChildProfileModule(profile: ProfileModelProtocol, output: ProfileModuleOutput) {
         let module = routeMap.profileModule(profile: profile, output: output)
-        transitionHandler?.addChild(module.view)
-        self.output?.childAdded(viewController: module.view)
-        module.view.didMove(toParent: transitionHandler)
+        transitionHandler?.setViewControllers([module.view], direction: .forward, animated: true)
+    }
+    
+    func addChildEmptyModule() {
+        transitionHandler?.setViewControllers([EmptyViewController()], direction: .forward, animated: true)
     }
 }

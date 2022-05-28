@@ -13,6 +13,7 @@ import ProfileRouteMap
 import ProfilesListRouteMap
 import UserStoryFacade
 import ModelInterfaces
+import AlertManager
 
 public final class ProfilesListUserStory {
 
@@ -31,10 +32,12 @@ extension ProfilesListUserStory: ProfilesListRouteMap {
 
 extension ProfilesListUserStory: RouteMapPrivate {
     func relationshipsModule() -> ProfilesListModule {
-        guard let profilesManager = container.resolve(UsersManagerProtocol.self) else {
+        guard let profilesManager = container.synchronize().resolve(UsersManagerProtocol.self),
+              let alertManager = container.synchronize().resolve(AlertManagerProtocol.self) else {
             fatalError(ErrorMessage.dependency.localizedDescription)
         }
         let module = ProfilesListAssembly.makeModule(profilesManager: profilesManager,
+                                                     alertManager: alertManager,
                                                      routeMap: self)
         return module
     }

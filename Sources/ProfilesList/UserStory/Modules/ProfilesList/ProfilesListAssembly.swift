@@ -9,19 +9,22 @@
 import UIKit
 import Module
 import ProfilesListRouteMap
+import AlertManager
 
 enum ProfilesListAssembly {
     static func makeModule(profilesManager: UsersManagerProtocol,
+                           alertManager: AlertManagerProtocol,
                            routeMap: RouteMapPrivate) -> ProfilesListModule {
         let view = ProfilesListViewController()
         let router = ProfilesListRouter(routeMap: routeMap)
         let interactor = ProfilesListInteractor(profilesManager: profilesManager)
-        let presenter = ProfilesListPresenter(router: router, interactor: interactor)
+        let presenter = ProfilesListPresenter(router: router,
+                                              interactor: interactor,
+                                              alertManager: alertManager)
         view.output = presenter
         interactor.output = presenter
         presenter.view = view
         router.transitionHandler = view
-        router.output = presenter
         return ProfilesListModule(input: presenter, view: view) {
             presenter.output = $0
         }
