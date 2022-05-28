@@ -11,15 +11,17 @@ import Module
 import ProfilesListRouteMap
 
 enum ProfilesListAssembly {
-    static func makeModule(profilesManager: UsersManagerProtocol) -> ProfilesListModule {
+    static func makeModule(profilesManager: UsersManagerProtocol,
+                           routeMap: RouteMapPrivate) -> ProfilesListModule {
         let view = ProfilesListViewController()
-        let router = ProfilesListRouter()
+        let router = ProfilesListRouter(routeMap: routeMap)
         let interactor = ProfilesListInteractor(profilesManager: profilesManager)
         let presenter = ProfilesListPresenter(router: router, interactor: interactor)
         view.output = presenter
         interactor.output = presenter
         presenter.view = view
         router.transitionHandler = view
+        router.output = presenter
         return ProfilesListModule(input: presenter, view: view) {
             presenter.output = $0
         }

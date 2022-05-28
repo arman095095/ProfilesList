@@ -15,7 +15,9 @@ import UserStoryFacade
 import ModelInterfaces
 
 public final class ProfilesListUserStory {
+
     private let container: Container
+
     public init(container: Container) {
         self.container = container
     }
@@ -32,7 +34,8 @@ extension ProfilesListUserStory: RouteMapPrivate {
         guard let profilesManager = container.resolve(UsersManagerProtocol.self) else {
             fatalError(ErrorMessage.dependency.localizedDescription)
         }
-        let module = ProfilesListAssembly.makeModule(profilesManager: profilesManager)
+        let module = ProfilesListAssembly.makeModule(profilesManager: profilesManager,
+                                                     routeMap: self)
         return module
     }
     

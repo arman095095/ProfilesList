@@ -12,7 +12,7 @@ import Managers
 
 final class ProfileStateDeterminatorAssembly: Assembly {
     func assemble(container: Container) {
-        container.register(ProfileStateDeterminator.self) { r in
+        container.register(ProfileStateDeterminatorProtocol.self) { r in
             guard let account = r.resolve(AccountModelProtocol.self) else {
                 fatalError(ErrorMessage.dependency.localizedDescription)
             }
