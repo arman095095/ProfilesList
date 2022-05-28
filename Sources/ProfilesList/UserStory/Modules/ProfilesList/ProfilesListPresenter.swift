@@ -16,22 +16,29 @@ protocol ProfilesListViewOutput: AnyObject {
     func viewDidLoad()
 }
 
+protocol ProfilesListStringFactoryProtocol {
+    var emptyMessage: String { get }
+}
+
 final class ProfilesListPresenter {
     
     weak var view: ProfilesListViewInput?
     weak var output: ProfilesListModuleOutput?
     private let router: ProfilesListRouterInput
     private let interactor: ProfilesListInteractorInput
+    private let stringFactory: ProfilesListStringFactoryProtocol
     private let alertManager: AlertManagerProtocol
     private var profiles: [ProfileModelProtocol]
     private var index: Int
     
     init(router: ProfilesListRouterInput,
          interactor: ProfilesListInteractorInput,
-         alertManager: AlertManagerProtocol) {
+         alertManager: AlertManagerProtocol,
+         stringFactory: ProfilesListStringFactoryProtocol) {
         self.router = router
         self.interactor = interactor
         self.alertManager = alertManager
+        self.stringFactory = stringFactory
         self.index = 0
         self.profiles = []
     }
@@ -39,7 +46,6 @@ final class ProfilesListPresenter {
 
 extension ProfilesListPresenter: ProfilesListViewOutput {
     func viewDidLoad() {
-        view?.setupInitialState()
         interactor.loadFirstProfiles()
     }
 }
@@ -49,7 +55,8 @@ extension ProfilesListPresenter: ProfilesListInteractorOutput {
     func successInitialLoaded(profiles: [ProfileModelProtocol]) {
         self.profiles = profiles
         guard let profile = profiles.first else {
-            router.addChildEmptyModule()
+            alertManager.present(type: .error, title: stringFactory.emptyMessage)
+            router.addChildEmptyModule(output: self)
             return
         }
         router.addChildProfileModule(profile: profile, output: self)
@@ -66,6 +73,13 @@ extension ProfilesListPresenter: ProfilesListInteractorOutput {
 
 extension ProfilesListPresenter: ProfilesListModuleInput {
     
+}
+
+extension ProfilesListPresenter: EmptyViewOutput {
+    func initialLoad() {
+        index = 0
+        interactor.loadFirstProfiles()
+    }
 }
 
 extension ProfilesListPresenter: ProfileModuleOutput {
@@ -101,7 +115,7 @@ private extension ProfilesListPresenter {
 
     func nextProfile() {
         if index == profiles.count - 1 {
-            router.addChildEmptyModule()
+            router.addChildEmptyModule(output: self)
             return
         }
         index += 1

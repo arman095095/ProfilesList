@@ -8,9 +8,7 @@
 
 import UIKit
 
-protocol ProfilesListViewInput: AnyObject {
-    func setupInitialState()
-}
+protocol ProfilesListViewInput: AnyObject { }
 
 final class ProfilesListViewController: UIPageViewController {
     var output: ProfilesListViewOutput?
@@ -21,20 +19,5 @@ final class ProfilesListViewController: UIPageViewController {
     }
 }
 
-extension ProfilesListViewController: ProfilesListViewInput {
-    func setupInitialState() {
-        self.delegate = self
-        self.dataSource = self
-    }
-}
-
-extension ProfilesListViewController: UIPageViewControllerDataSource, UIPageViewControllerDelegate {
-    func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
-        return nil
-    }
-    
-    func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
-        return nil
-    }
-}
+extension ProfilesListViewController: ProfilesListViewInput { }
 

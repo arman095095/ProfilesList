@@ -21,12 +21,14 @@ final class UsersManager {
         case users = 15
     }
     
+    private let account: AccountModelProtocol
     private let accountID: String
     private let profilesService: ProfilesNetworkServiceProtocol
     private let profileInfoService: ProfileInfoNetworkServiceProtocol
     private let profileStateDeterminator: ProfileStateDeterminatorProtocol
     
     init(accountID: String,
+         account: AccountModelProtocol,
          profilesService: ProfilesNetworkServiceProtocol,
          profileInfoService: ProfileInfoNetworkServiceProtocol,
          profileStateDeterminator: ProfileStateDeterminatorProtocol) {
@@ -34,13 +36,15 @@ final class UsersManager {
         self.profileInfoService = profileInfoService
         self.profileStateDeterminator = profileStateDeterminator
         self.accountID = accountID
+        self.account = account
     }
 }
 
 extension UsersManager: UsersManagerProtocol {
     
     func getFirstProfiles(completion: @escaping (Result<[ProfileModelProtocol], Error>) -> Void) {
-        profilesService.getFirstProfilesIDs(count: Limits.users.rawValue) { [weak self] result in
+        guard let sex = requestsSex() else { return }
+        profilesService.getFirstProfilesIDs(sex: sex.rawValue, count: Limits.users.rawValue) { [weak self] result in
             guard let self = self else { return }
             switch result {
             case .success(let ids):
@@ -70,7 +74,8 @@ extension UsersManager: UsersManagerProtocol {
     }
     
     func getNextProfiles(completion: @escaping (Result<[ProfileModelProtocol], Error>) -> Void) {
-        profilesService.getNextProfilesIDs(count: Limits.users.rawValue) { [weak self] result in
+        guard let sex = requestsSex() else { return }
+        profilesService.getNextProfilesIDs(sex: sex.rawValue, count: Limits.users.rawValue) { [weak self] result in
             guard let self = self else { return }
             switch result {
             case .success(let ids):
@@ -101,8 +106,24 @@ extension UsersManager: UsersManagerProtocol {
 }
 
 private extension UsersManager {
+    
+    enum Sex: String {
+        case male = "Мужчина"
+        case female = "Женщина"
+    }
+    
     func filter(ids: [String]) -> [String] {
         let determinator = profileStateDeterminator
         return ids.filter { !(determinator.isProfileBlocked(userID: $0) || determinator.isProfileFriend(userID: $0) || determinator.isProfileRequested(userID: $0) || determinator.isProfileCurrent(userID: $0))  }
+    }
+    
+    func requestsSex() -> Sex? {
+        guard let sex = Sex(rawValue: account.profile.sex) else { return nil }
+        switch sex {
+        case .male:
+            return .female
+        case .female:
+            return .male
+        }
     }
 }

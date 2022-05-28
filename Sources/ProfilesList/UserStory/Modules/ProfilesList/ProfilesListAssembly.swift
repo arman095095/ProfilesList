@@ -18,9 +18,11 @@ enum ProfilesListAssembly {
         let view = ProfilesListViewController()
         let router = ProfilesListRouter(routeMap: routeMap)
         let interactor = ProfilesListInteractor(profilesManager: profilesManager)
+        let stringFactory = ProfilesListStringFactory()
         let presenter = ProfilesListPresenter(router: router,
                                               interactor: interactor,
-                                              alertManager: alertManager)
+                                              alertManager: alertManager,
+                                              stringFactory: stringFactory)
         view.output = presenter
         interactor.output = presenter
         presenter.view = view

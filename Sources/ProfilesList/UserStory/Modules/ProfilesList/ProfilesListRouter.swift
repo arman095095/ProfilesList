@@ -12,7 +12,7 @@ import ModelInterfaces
 
 protocol ProfilesListRouterInput: AnyObject {
     func addChildProfileModule(profile: ProfileModelProtocol, output: ProfileModuleOutput)
-    func addChildEmptyModule()
+    func addChildEmptyModule(output: EmptyViewOutput)
 }
 
 final class ProfilesListRouter {
@@ -30,7 +30,9 @@ extension ProfilesListRouter: ProfilesListRouterInput {
         transitionHandler?.setViewControllers([module.view], direction: .forward, animated: true)
     }
     
-    func addChildEmptyModule() {
-        transitionHandler?.setViewControllers([EmptyViewController()], direction: .forward, animated: true)
+    func addChildEmptyModule(output: EmptyViewOutput) {
+        let view = EmptyViewController()
+        view.output = output
+        transitionHandler?.setViewControllers([view], direction: .forward, animated: true)
     }
 }

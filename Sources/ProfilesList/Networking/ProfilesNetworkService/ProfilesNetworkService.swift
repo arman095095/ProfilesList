@@ -19,8 +19,8 @@ enum URLComponents {
 }
 
 protocol ProfilesNetworkServiceProtocol {
-    func getFirstProfilesIDs(count: Int, completion: @escaping (Result<[String],Error>) -> Void)
-    func getNextProfilesIDs(count: Int, completion: @escaping (Result<[String],Error>) -> Void)
+    func getFirstProfilesIDs(sex: String, count: Int, completion: @escaping (Result<[String],Error>) -> Void)
+    func getNextProfilesIDs(sex: String, count: Int, completion: @escaping (Result<[String],Error>) -> Void)
 }
 
 final class ProfilesNetworkService {
@@ -38,19 +38,19 @@ final class ProfilesNetworkService {
 
 extension ProfilesNetworkService: ProfilesNetworkServiceProtocol {
 
-    func getFirstProfilesIDs(count: Int, completion: @escaping (Result<[String],Error>) -> Void) {
+    func getFirstProfilesIDs(sex: String, count: Int, completion: @escaping (Result<[String],Error>) -> Void) {
         if !InternetConnectionManager.isConnectedToNetwork() {
             completion(.failure(ConnectionError.noInternet))
         }
-        let query = usersRef.order(by: URLComponents.Parameters.lastActivity.rawValue, descending: true).limit(to: count)
+        let query = usersRef.whereField(ProfileURLComponents.Parameters.sex.rawValue, isEqualTo: sex).limit(to: count)
         getFirstUsersIDs(query: query, completion: completion)
     }
     
-    func getNextProfilesIDs(count: Int, completion: @escaping (Result<[String],Error>) -> Void) {
+    func getNextProfilesIDs(sex: String, count: Int, completion: @escaping (Result<[String],Error>) -> Void) {
         if !InternetConnectionManager.isConnectedToNetwork() {
             completion(.failure(ConnectionError.noInternet))
         }
-        let query = usersRef.order(by: URLComponents.Parameters.lastActivity.rawValue, descending: true).limit(to: count)
+        let query = usersRef.whereField(ProfileURLComponents.Parameters.sex.rawValue, isEqualTo: sex).limit(to: count)
         getNextUsersIDs(count: count, query: query, completion: completion)
     }
 }
