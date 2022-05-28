@@ -8,12 +8,19 @@
 
 import UIKit
 import Swinject
+import ProfilesListRouteMap
 
 public final class ProfilesListUserStoryAssembly: Assembly {
     
     public init() { }
 
     public func assemble(container: Container) {
-        //
+        ProfileInfoNetworkServiceAssembly().assemble(container: container)
+        ProfilesNetworkServiceAssembly().assemble(container: container)
+        ProfileStateDeterminatorAssembly().assemble(container: container)
+        UsersManagerAssembly().assemble(container: container)
+        container.register(ProfilesListRouteMap.self) { r in
+            ProfilesListUserStory(container: container)
+        }
     }
 }

@@ -29,7 +29,11 @@ extension ProfilesListUserStory: ProfilesListRouteMap {
 
 extension ProfilesListUserStory: RouteMapPrivate {
     func relationshipsModule() -> ProfilesListModule {
-        ProfilesListAssembly.makeModule(profilesManager: <#UsersManagerProtocol#>)
+        guard let profilesManager = container.resolve(UsersManagerProtocol.self) else {
+            fatalError(ErrorMessage.dependency.localizedDescription)
+        }
+        let module = ProfilesListAssembly.makeModule(profilesManager: profilesManager)
+        return module
     }
     
     func profileModule(profile: ProfileModelProtocol, output: ProfileModuleOutput) -> ProfileModule {
