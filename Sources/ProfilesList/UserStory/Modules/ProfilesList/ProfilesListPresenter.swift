@@ -47,6 +47,8 @@ final class ProfilesListPresenter {
 
 extension ProfilesListPresenter: ProfilesListViewOutput {
     func viewDidLoad() {
+        view?.setupInitialState()
+        view?.setLoad(on: true)
         interactor.loadFirstProfiles()
     }
 }
@@ -54,6 +56,7 @@ extension ProfilesListPresenter: ProfilesListViewOutput {
 extension ProfilesListPresenter: ProfilesListInteractorOutput {
 
     func successInitialLoaded(profiles: [ProfileModelProtocol]) {
+        view?.setLoad(on: false)
         self.profiles = profiles
         guard let profile = profiles.first else {
             alertManager.present(type: .error, title: stringFactory.emptyMessage)
@@ -68,6 +71,7 @@ extension ProfilesListPresenter: ProfilesListInteractorOutput {
     }
     
     func failureLoad(message: String) {
+        view?.setLoad(on: false)
         alertManager.present(type: .error, title: message)
     }
 }
