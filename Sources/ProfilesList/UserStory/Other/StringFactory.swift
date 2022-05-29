@@ -13,4 +13,5 @@ struct ProfilesListStringFactory: EmptyViewStringFactoryProtocol,
     var title: String = "К сожалению, Вы просмотрели все профили"
     var description: String = "Но вы можете попробовать начать все заново"
     var buttonTitle: String = "Начать заново"
+    var successMessage: String = "Поздравляем, у Вас образовалась новая пара"
 }

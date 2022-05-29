@@ -18,6 +18,7 @@ protocol ProfilesListViewOutput: AnyObject {
 
 protocol ProfilesListStringFactoryProtocol {
     var emptyMessage: String { get }
+    var successMessage: String { get }
 }
 
 final class ProfilesListPresenter {
@@ -95,6 +96,7 @@ extension ProfilesListPresenter: ProfileModuleOutput {
     }
     
     func acceptedProfile() {
+        alertManager.present(type: .success, title: stringFactory.successMessage)
         loadNextProfilesIfNeeded()
         nextProfile()
     }
